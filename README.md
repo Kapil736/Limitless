@@ -1,7 +1,7 @@
 # Limitless: An Agentic AI Development Environment
 
 <p align="center">
-  <img src="C:\Users\nicks\Limitless\limitless\landing_page.png" alt="Limitless Banner" width="600"/>
+  <img src="C:\Users\nicks\Limitless\limitless\assets\landing_page.png" alt="Limitless Banner" width="600"/>
 </p>
 
 <p align="center">
@@ -11,7 +11,7 @@
 ---
 
 <p align="center">
-  <img src="C:\Users\nicks\Limitless\limitless\ChatUI_page.png" alt="Limitless Banner" width="600"/>
+  <img src="C:\Users\nicks\Limitless\limitless\assets\ChatUI_page.png" alt="Limitless Banner" width="600"/>
 </p>
 
 ## 🤖 About The Project
@@ -65,7 +65,7 @@ You must have the following software installed:
 
 1.  **Clone the repository:**
     ```sh
-    git clone {YOUR_REPOSITORY_URL}
+    git clone https://github.com/Kapil736/Limitless.git
     cd limitless
     ```
 

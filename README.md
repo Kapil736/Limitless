@@ -1,18 +1,14 @@
 # Limitless: An Agentic AI Development Environment
 
-<p align="center">
-  <img src="C:\Users\nicks\Limitless\limitless\assets\landing_page.png" alt="Limitless Banner" width="600"/>
-</p>
+![Limitless Landing Page](./assets/landing_page.png)
 
 <p align="center">
-  A GenAI-powered local IDE that transforms high-level user prompts into complete, multi-file codebases. Limitless uses a multi-agent workflow to first plan a project's architecture and then execute that plan by writing the code.
+A GenAI-powered local IDE that transforms high-level user prompts into complete, multi-file codebases. Limitless uses a multi-agent workflow to first plan a project's architecture and then execute that plan by writing the code.
 </p>
 
 ---
 
-<p align="center">
-  <img src="C:\Users\nicks\Limitless\limitless\assets\ChatUI_page.png" alt="Limitless Banner" width="600"/>
-</p>
+![Limitless Chat UI](./assets/ChatUI_page.png)
 
 ## 🤖 About The Project
 

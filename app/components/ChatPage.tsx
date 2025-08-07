@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast, Toaster } from 'react-hot-toast'
-import { Menu, X, Sparkles, ArrowLeft, Plus, Settings, MessageSquare, Code } from 'lucide-react'
+import { Menu, X, Sparkles, ArrowLeft, Plus, Settings, MessageSquare, Code, Play  } from 'lucide-react'
 import Link from 'next/link'
 import { Message, ChatProject, FileNode } from './types'
 import { ChatInput } from './ChatInput'
@@ -126,6 +126,13 @@ export default function ChatPage() {
       console.error(error)
     }
   }
+
+  const handleRunProject = () => {
+    if (activeProjectId) {
+     const previewUrl = `/api/preview/${activeProjectId}/index.html`;
+     window.open(previewUrl, '_blank');
+    }
+  };
 
   const handleNewProject = () => {
     const newProject: ChatProject = {
@@ -382,6 +389,13 @@ export default function ChatPage() {
                 className={`p-2 rounded-lg flex items-center space-x-2 text-sm ${mainView === 'code' ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100'} disabled:opacity-50 disabled:cursor-not-allowed`}
               >
                 <Code size={16} /> <span>Code</span>
+              </button>
+              <button
+                onClick={handleRunProject}
+                disabled={!activeProject || projectFiles.length === 0}
+                className="p-2 rounded-lg flex items-center space-x-2 text-sm bg-green-100 text-green-800 hover:bg-green-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Play size={16} /> <span>Run</span>
               </button>
             </div>
           </div>

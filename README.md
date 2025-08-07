@@ -16,8 +16,8 @@ Limitless is a "work in progress" exploration into the future of AI-native softw
 
 The core of Limitless is its **two-agent "Plan and Execute" system**:
 
-1.  **The Architect (PRD Agent):** A general-purpose LLM (like `Mistral`) that acts as a product manager. It takes a user's initial idea and generates a structured **Project Requirements Document (PRD)** in JSON format, outlining the project's features and tech stack.
-2.  **The Builder (Code Agent):** A specialized code model (like `Qwen-Code`) that takes the PRD created by the Architect as its "source of truth." It then generates a complete, multi-file codebase and structures it in a logical file hierarchy, writing the files directly to the local file system.
+1.  **The Architect (PRD Agent):** A general-purpose LLM (`llama3:latest`) that acts as a product manager. It takes a user's initial idea and generates a structured **Project Requirements Document (PRD)** in JSON format, outlining the project's features and tech stack.
+2.  **The Builder (Code Agent):** A specialized code model (`qwen2.5-coder:latest`) that takes the PRD created by the Architect as its "source of truth." It then generates a complete, multi-file codebase and structures it in a logical file hierarchy, writing the files directly to the local file system.
 
 ## ✅ Current Features
 

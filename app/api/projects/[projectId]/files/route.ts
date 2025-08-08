@@ -44,11 +44,10 @@ export async function GET(
   { params }: { params: { projectId: string } }
 ) {
   try {
-    const projectId = params.projectId;
+    const { projectId } = params; // This is now safe
     const projectDir = path.join(process.cwd(), 'projects', projectId);
 
     if (!fs.existsSync(projectDir)) {
-      // It's okay if the folder doesn't exist yet, just return empty
       return NextResponse.json([]);
     }
 

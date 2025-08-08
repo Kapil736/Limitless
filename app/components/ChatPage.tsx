@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast, Toaster } from 'react-hot-toast'
-import { Menu, X, Sparkles, ArrowLeft, Plus, Settings, MessageSquare, Code, Play  } from 'lucide-react'
+import { Menu, X, Sparkles, ArrowLeft, Plus, Settings, MessageSquare, Code, Play } from 'lucide-react'
 import Link from 'next/link'
 import { Message, ChatProject, FileNode } from './types'
 import { ChatInput } from './ChatInput'
@@ -129,10 +129,10 @@ export default function ChatPage() {
 
   const handleRunProject = () => {
     if (activeProjectId) {
-     const previewUrl = `/api/preview/${activeProjectId}/index.html`;
-     window.open(previewUrl, '_blank');
+      const previewUrl = `/api/preview/${activeProjectId}/index.html`
+      window.open(previewUrl, '_blank')
     }
-  };
+  }
 
   const handleNewProject = () => {
     const newProject: ChatProject = {
@@ -177,7 +177,6 @@ export default function ChatPage() {
 
   const handleSendMessage = async (inputMessage: string) => {
     if (!inputMessage.trim() || isGenerating || !activeProjectId) return
-
     setIsGenerating(true)
     
     const userMessage: Message = {
@@ -195,6 +194,22 @@ export default function ChatPage() {
       )
     )
     
+    const aiResponseId = (Date.now() + 1).toString()
+    const aiResponsePlaceholder: Message = {
+      id: aiResponseId,
+      role: 'assistant',
+      content: 'Starting the agent...',
+      timestamp: new Date()
+    }
+
+    setProjects(currentProjects =>
+      currentProjects.map(p =>
+        p.id === activeProjectId
+          ? { ...p, messages: [...p.messages, aiResponsePlaceholder] }
+          : p
+      )
+    )
+
     try {
       const response = await fetch('/api/generate', {
         method: 'POST',
@@ -202,26 +217,47 @@ export default function ChatPage() {
         body: JSON.stringify({ prompt: inputMessage, projectId: activeProjectId })
       })
 
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.message || "An error occurred.")
-      }
-      
-      const aiResponseMessage: Message = {
-        id: Date.now().toString(),
-        role: 'assistant',
-        content: result.message,
-        timestamp: new Date()
+      if (!response.body) {
+        throw new Error("Response body is empty.")
       }
 
-      setProjects(currentProjects =>
-        currentProjects.map(p =>
-          p.id === activeProjectId ? { ...p, messages: [...p.messages, aiResponseMessage] } : p
-        )
-      )
-      
-      // Refresh the file list after generation
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
+      let buffer = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+        const lines = buffer.split('\n\n')
+        buffer = lines.pop() || ''
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const jsonString = line.substring(6)
+            try {
+              const data = JSON.parse(jsonString)
+              
+              setProjects(currentProjects =>
+                currentProjects.map(p => {
+                  if (p.id === activeProjectId) {
+                    const updatedMessages = p.messages.map(m => 
+                      m.id === aiResponseId ? { ...m, content: data.status } : m
+                    )
+                    return { ...p, messages: updatedMessages }
+                  }
+                  return p
+                })
+              )
+            } catch (e) {
+              console.error("Failed to parse JSON:", e)
+            }
+          }
+        }
+      }
+
+      // After generation completes, refresh the file list
       const fileResponse = await fetch(`/api/projects/${activeProjectId}/files`)
       const fileData = await fileResponse.json()
       if (fileData && !fileData.error) {
@@ -231,16 +267,20 @@ export default function ChatPage() {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "An unknown error occurred."
       toast.error(errorMessage)
-      const aiErrorMessage: Message = {
-        id: Date.now().toString(),
-        role: 'assistant',
-        content: `Sorry, an error occurred: ${errorMessage}`,
-        timestamp: new Date()
-      }
+      
       setProjects(currentProjects =>
-        currentProjects.map(p =>
-          p.id === activeProjectId ? { ...p, messages: [...p.messages, aiErrorMessage] } : p
-        )
+        currentProjects.map(p => {
+          if (p.id === activeProjectId) {
+            const updatedMessages = p.messages.map(m => 
+              m.id === aiResponseId ? { 
+                ...m, 
+                content: `Error: ${errorMessage}` 
+              } : m
+            )
+            return { ...p, messages: updatedMessages }
+          }
+          return p
+        })
       )
     } finally {
       setIsGenerating(false)

@@ -7,7 +7,7 @@ export async function GET(
   { params }: { params: { projectId: string; filePath: string[] } }
 ) {
   try {
-    const { projectId, filePath } = params;
+    const { projectId, filePath } = params; // This is now safe
     const relativeFilePath = path.join(...filePath);
     const projectDir = path.join(process.cwd(), 'projects', projectId);
     const absoluteFilePath = path.join(projectDir, relativeFilePath);
